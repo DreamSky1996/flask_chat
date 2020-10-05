@@ -1,0 +1,64 @@
+{% extends "profile.html" %}
+
+
+{% block pr %}
+<style>
+    .profile-text {
+        font-size: 22px;
+    }
+</style>
+
+<div class="editprofile" style="grid-column: 1;
+grid-row: 1/4; background-color: #24242a;">
+
+    <div class="profile-header" style="height: 65px; background-color: yellow; display: flex;">
+        <a href="/profile" style="text-decoration: none;">
+            <span class="material-icons"
+                style="color:black; font-size: 40px;margin-top: 10px;margin-left: 5px;cursor: pointer;">arrow_back</span>
+        </a>
+        <div style="font-size: 25px;margin-top: 20px;margin-left: 10px;">Profile</div>
+
+    </div>
+
+    <div class="profile-display" style="height: 250px;text-align: center;">
+        <svg data-jdenticon-value="{{current_user.name}}" style="border-radius: 50%; width: 180px; margin-top: 20px;">
+            Fallback text or image for browsers not supporting inline svg.
+        </svg>
+    </div>
+
+    <div class="profile-name"
+        style="height: 120px;;display: flex;flex-direction: column;border-right: 2px solid #24242A;">
+
+        <div class="profile-text" style="height: 60px;display: block;padding: 18px 10px 10px 10px; color: white;">Your
+            Name</div>
+        <form action="/editprofile" method="POST" id="profile-form">
+            <div style="height: 62px;display:block;padding:9px;">
+                <input name="fullname" type="text"
+                    style="outline: none;border: 0;width: 99%;border-bottom: 1px solid white;padding: 11px; background-color: #24242A;color: white;"
+                    value="{{current_user.name}}"></input>
+            </div>
+        </form>
+    </div>
+    <br>
+
+    <div class="profile-email"
+        style="height: 120px;color:white;display: flex;flex-direction: column;border-right: 2px solid #24242A;">
+
+        <div class="profile-text" style="height: 60px;display: block;padding: 18px 10px 10px 10px;">Email</div>
+        <div style="height: 60px;display: block;padding: 18px 10px 10px 10px;">{{current_user.email}}</div>
+    </div>
+
+    <div style="text-align: right; margin-right: 30px; margin-top: 20px;">
+        <button type="submit" form="profile-form">Save</button>
+    </div>
+
+
+</div>
+
+
+
+
+
+
+
+{% endblock %}

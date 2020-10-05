@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+
+<title>
+    Sign Up - Circles
+</title>
+<link rel="stylesheet" href="static/styles/forms.css">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<h2> SIGN UP!</h2>
+
+<body class="form_page">
+
+    <form action="{{ url_for('sign_up') }}" , method="POST">
+
+        <div>
+            <label for="name">Name</label>
+            {{ form.name(class_='form-control',
+                placeholder = "Name", autocomplete='off', autofocus=true)}}
+            <ul>
+                {% for error in form.name.errors %}
+                <li> {{ error }} </li>
+                {% endfor %}
+            </ul>
+        </div>
+
+
+        <div>
+            <label for="Email">Email ID</label>
+            {{ form.email(class_='form-control',
+                placeholder = "Username", autocomplete='off', autofocus=true)}}
+            <ul>
+                {% for error in form.email.errors %}
+                <li> {{ error }} </li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <div>
+            <label for="password">Password</label>
+            {{ form.password(class_='form-control',
+                placeholder = "Password")}}
+
+
+            <ul>
+                {% for error in form.password.errors %}
+                <li> {{ error }} </li>
+                {% endfor %}
+            </ul>
+
+        </div>
+
+
+        <div>
+            <label for="confirmPassword">Re-enter Password</label>
+            {{ form.confirmPassword(class_='form-control',
+                placeholder = "Re-enter Password")}}
+            <ul>
+                {% for error in form.confirmPassword.errors %}
+                <li> {{ error }} </li>
+                {% endfor %}
+            </ul>
+
+        </div>
+
+
+
+
+        <div>
+            <input type="submit" value="Create">
+        </div>
+
+        {{ form.csrf_token }}
+
+    </form>
+
+
+</body>
+
+</html>

@@ -1,0 +1,47 @@
+{% extends "profile.html" %}
+
+{% block content %}
+<style>
+    #calendar {
+        width: 650px;
+        height: 600px;
+        max-width: 900px;
+        margin: 40px auto;
+        padding: 0 10px;
+    }
+</style>
+
+<link rel='stylesheet' href='static/styles/fullcalendar.min.css' />
+<div id="task-container" style="grid-row:1/4 ; grid-column: 2/4;background-color: snow;">
+
+    <div class="" id="calendar"></div>
+
+</div>
+
+<script>
+
+    document.addEventListener('DOMContentLoaded', function () {
+        $('#calendar').fullCalendar({
+            header: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'month,agendaWeek,agendaDay'
+            },
+            editable: false,
+            eventLimit: true,
+            events: {
+                url: 'data'
+            }
+        })
+    });
+
+</script>
+
+<script src='https://fullcalendar.io/js/fullcalendar-3.1.0/lib/moment.min.js'></script>
+<script src='https://fullcalendar.io/js/fullcalendar-3.1.0/lib/jquery.min.js'></script>
+<script src='https://fullcalendar.io/js/fullcalendar-3.1.0/lib/jquery-ui.min.js'></script>
+<script src='https://fullcalendar.io/js/fullcalendar-3.1.0/fullcalendar.min.js'></script>
+
+
+
+{% endblock %}

@@ -1,0 +1,140 @@
+{% extends "profile.html" %}
+
+{% block content %}
+
+<script src="/static/scripts/moment.min.js"></script>
+
+<style>
+    form {
+        position: relative;
+        z-index: 1;
+        max-width: 360px;
+        margin: 130px auto 100px;
+        padding: 45px;
+        text-align: center;
+        justify-content: center;
+        box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2), 0 5px 5px 0 rgba(0, 0, 0, 0.24);
+        color: white;
+    }
+
+    input[type="submit"] {
+        font-family: "Roboto", sans-serif;
+        text-transform: uppercase;
+        outline: 0;
+        background: #faf015;
+        width: 100%;
+        border: 0;
+        padding: 15px;
+        color: #1c1c18;
+        font-size: 14px;
+        -webkit-transition: all 0.3 ease;
+        transition: all 0.3 ease;
+        cursor: pointer;
+    }
+
+    input[type=text],
+    input[type=password] {
+        width: 100%;
+        padding: 12px 20px;
+        margin: 8px 0;
+        display: inline-block;
+        border: 1px solid #ccc;
+        box-sizing: border-box;
+    }
+</style>
+
+<div class="createtasks"
+    style="grid-row:1/4 ; grid-column: 2/4;background-color: #242424;border-left: 2px solid yellow;">
+
+    <h1 style="color: white;text-align: center;margin-top: 50px;"> UPDATE TASK</h1>
+
+    <form class="task_form" action="{{ url_for('update_task',task_id=taskid) }}" , method="POST">
+
+        <div>
+            <label for="task_name">Task Name</label>
+            {{ form.task_name(class_='form-control',
+            placeholder = "Name", autocomplete='off', autofocus=true)}}
+            <ul>
+                {% for error in form.task_name.errors %}
+                <li> {{ error }} </li>
+                {% endfor %}
+            </ul>
+        </div>
+
+
+        <div>
+            <label for="task_desc">Task Description</label>
+            {{ form.task_desc(class_='form-control',
+            placeholder = "Description", autocomplete='off', autofocus=true)}}
+            <ul>
+                {% for error in form.task_desc.errors %}
+                <li> {{ error }} </li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <div>
+            <label for="user_team">Team Name</label>
+            {{ form.user_team}}
+            <ul>
+                {% for error in form.user_team.errors %}
+                <li> {{ error }} </li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <div>
+            <label for="user_email"> User Email </label>
+            {{form.user_email}}
+            <ul>
+                {% for error in form.user_email.errors %}
+                <li> {{ error }} </li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <div>
+            <label for="deadline_date"> Deadline date </label>
+            {{ form.deadline_date(class_='form-control',
+            placeholder = "Date for Completion", autocomplete='off', autofocus=true)}}
+            <ul>
+                {% for error in form.deadline_date.errors %}
+                <li> {{ error }} </li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <div>
+            <input type="submit" value="Update">
+        </div>
+        {{ form.csrf_token }}
+    </form>
+
+
+
+</div>
+
+<script>
+    console.log("Hello WOrld")
+    let team = document.getElementById('user_team')
+    let mem = document.getElementById('user_email')
+    team.onchange = function () {
+        console.log("Howdy")
+        t = team.value
+        console.log(t)
+        fetch("/mem/" + t).then(function (response) {
+            response.json().then(function (data) {
+                console.table(data)
+                let optionHTML = '';
+                for (let mem of data.members) {
+                    optionHTML += '<option value="' + mem.member + '">' + mem.member + '</option>';
+                    console.log(optionHTML)
+                }
+                mem.innerHTML = optionHTML;
+            })
+        })
+    }
+
+</script>
+
+{% endblock %}

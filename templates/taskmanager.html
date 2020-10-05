@@ -1,0 +1,221 @@
+{% extends "profile.html" %}
+
+{% block content %}
+<style>
+	.task-heading {
+		font-size: 25px;
+		padding: 10px;
+	}
+
+	.task-table {
+		table-layout: auto;
+		width: 100%;
+	}
+
+	.task-table th {
+		font-size: 20px;
+		padding: 10px;
+		border-bottom: 1px solid;
+	}
+
+	.task-table td {
+		text-align: center;
+		padding: 10px;
+	}
+
+	.tasks {
+		padding-left: 10px;
+		margin-left: 10px;
+		width: 98%;
+		overflow: auto;
+		height: 100%;
+		max-height: 22%;
+	}
+
+	button {
+		background-color: white;
+		color: black;
+		border: 2px solid yellow;
+		border: none;
+		color: white;
+		padding: 16px 32px;
+		text-align: center;
+		display: inline-block;
+		font-size: 16px;
+		margin-left: 5px;
+		margin: 4px 2px;
+		transition-duration: 0.4s;
+		cursor: pointer;
+	}
+
+	button a {
+		text-decoration: none;
+		color: black;
+	}
+
+	.taskbutton:hover {
+		background-color: #7993b6;
+		color: white;
+	}
+</style>
+
+<script src="/static/scripts/moment.min.js"></script>
+<div class="taskmanager" style="grid-row:1/4 ; grid-column: 2/4;background-color: snow;">
+
+	<h1 style="text-align: center;">Task Manager</h1>
+
+	{% with messages= get_flashed_messages() %}
+	{% if messages %}
+	{% for msg in messages %}
+	<div class="fmessage" style=" margin-left:20px;padding: 10px;background-color: green;color: white;">
+		<span style="margin-left: 15px;color: white;font-weight: bold;float: right;font-size: 22px;line-height: 20px;cursor: pointer;
+                     transition: 0.3s;" onclick="this.parentElement.style.display='none';">&times;</span>
+		<p>{{msg}}</p>
+	</div>
+	{% endfor %}
+	{% endif %}
+	{% endwith %}
+
+	<script src="/static/moment.min.js"></script>
+
+	<div style="margin-left: 10px;">
+		<button class="taskbutton" type="submit"><a href="{{ url_for('add_task') }}"> Add Task </a></button>
+	</div>
+	<div class="task-heading" style="margin-top: 10px;">
+		Incomplete Tasks
+	</div>
+	<div class="tasks">
+
+		{% if incompleted|length %}
+		<table class="task-table">
+			<tr>
+				<th>Task</th>
+				<th>Deadline</th>
+				<th>Team</th>
+				<th>Description</th>
+				<th>Username</th>
+			</tr>
+			{% for task in incompleted %}
+			<tr>
+				<td>{{ task[0].task_name }}</td>
+				<td>{{ momentjs(task[0].deadline).format("MMMM Do YYYY") }}</td>
+				<td>{{ task[1].team_name }}</td>
+				<td> {{ task[0].task_desc }} </td>
+				<td>{{ task[2].name }} </td>
+				<td><span class="material-icons"
+						onclick="window.location.href='{{ url_for('delete_task',task_id=task[0].id) }}';">delete</span>
+				</td>
+				<td><span class="material-icons"
+						onclick="window.location.href='{{ url_for('update_task',task_id=task[0].id) }}';">update</span>
+				</td>
+			</tr>
+
+
+			{% endfor %}
+		</table>
+
+		{% else %}
+		<p> No tasks</p>
+		{% endif %}
+
+	</div>
+
+	<div class="task-heading">
+		Completed Tasks
+	</div>
+	<div class="tasks">
+		{% if completed|length %}
+
+		<table class="task-table">
+			<tr>
+				<th>Task</th>
+				<th>Deadline</th>
+				<th>Team</th>
+				<th>Description</th>
+				<th>Username</th>
+				<th>Completed on</th>
+			</tr>
+			{% for task in completed %}
+			<tr>
+				<td>{{ task[0].task_name }}</td>
+				<td>{{ momentjs(task[0].deadline).format("MMMM Do YYYY") }} </td>
+				<td>{{ task[1].team_name }}</td>
+				<td> {{ task[0].task_desc }} </td>
+				<td>{{ task[2].name }} </td>
+				<td>{{ momentjs(task[0].completed_on).calendar() }}</td>
+				<td><span class="material-icons"
+						onclick="window.location.href='{{ url_for('delete_task',task_id=task[0].id) }}';">delete</span>
+				</td>
+				<td><span class="material-icons"
+						onclick="window.location.href='{{ url_for('undo_complete2',task_id=task[0].id) }}';">undo</span>
+				</td>
+				<td><span class="material-icons"
+						onclick="window.location.href='{{ url_for('update_task',task_id=task[0].id) }}';">update</span>
+				</td>
+			</tr>
+
+			{% endfor %}
+		</table>
+		{% else %}
+		<p> No tasks</p>
+		{% endif %}
+
+	</div>
+
+	<div class="task-heading">
+		Deadline Missed
+	</div>
+
+	<div class="tasks" style="list-style: none;">
+		{% if expired|length %}
+		<table class="task-table">
+			<tr>
+				<th>Task</th>
+				<th>Deadline</th>
+				<th>Team</th>
+				<th>Description</th>
+				<th>Username</th>
+				<th>Response</th>
+			</tr>
+			{% for task in expired %}
+			<tr>
+				<td>{{ task[0].task_name }}</td>
+				<td>{{ momentjs(task[0].deadline).format("MMMM Do YYYY") }}</td>
+				<td>{{ task[1].team_name }}</td>
+				<td> {{ task[0].task_desc }} </td>
+				<td>{{ task[2].name }} </td>
+				{% if task[0].response|length %}
+				<td>{{ task[0].response}}</td>
+				{% else %}
+				<td> No Response </td>
+				{% endif %}
+				<td><span class="material-icons"
+						onclick="window.location.href='{{ url_for('delete_task',task_id=task[0].id) }}';">delete</span>
+				</td>
+				<td><span class="material-icons"
+						onclick="window.location.href='{{ url_for('update_task',task_id=task[0].id) }}';">update</span>
+				</td>
+			</tr>
+
+
+			{% endfor %}
+		</table>
+
+		{% else %}
+		<p> No tasks</p>
+		{% endif %}
+	</div>
+
+
+
+
+
+
+
+
+</div>
+
+
+
+
+{% endblock %}

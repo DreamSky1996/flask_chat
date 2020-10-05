@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta name="viewport" content="width=device-width" , initial-scale="1">
+    <meta charset="utf-8">
+    <title>Circles</title>
+    <style>
+        body {
+            background-color: #24252A;
+            color: #edf0f1;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 30px 9%;
+        }
+
+        .nav_links a {
+            text-decoration: none;
+            color: #edf0f1;
+        }
+
+        .nav_links li {
+            display: inline-block;
+            align-items: center;
+            text-decoration: none;
+            padding: 0px 20px;
+        }
+
+        .logo {
+            cursor: pointer;
+            width: 60px;
+            padding: 0;
+        }
+
+        b {
+            font-size: 35px;
+            padding-right: 790px;
+            text-decoration: none;
+            color: #edf0f1;
+        }
+    </style>
+    <header>
+        <img class="logo" src="static/images/logo.png">
+        <b>Circles</b>
+
+        <nav>
+            <ul class="nav_links">
+                <li>
+                    <a href="/">Home</a>
+                </li>
+                <li>
+                    <a href="/login">Login</a>
+                </li>
+                <li>
+                    <a href="/signup">SignUp</a>
+                </li>
+            </ul>
+        </nav>
+    </header>
+</head>
+
+<body>
+
+    {% with messages= get_flashed_messages() %}
+    {% if messages %}
+    {% for msg in messages %}
+    <div class="fmessage" style=" margin-left:20px;padding: 10px;background-color: green;color: white;">
+        <span style="margin-left: 15px;color: white;font-weight: bold;float: right;font-size: 22px;line-height: 20px;cursor: pointer;
+                     transition: 0.3s;" onclick="this.parentElement.style.display='none';">&times;</span>
+        <p>{{msg}}</p>
+    </div>
+    {% endfor %}
+    {% endif %}
+    {% endwith %}
+
+
+    <div style="display: flex;margin:70px 30px auto 530px">
+        <img src="/static/images/4457.jpg"
+            style="width:750px; display: block;height:550px;align-self: center;text-align: center;max-width: 100%;">
+    </div>
+    <div style="font-weight: bold; margin-left: 215px;">
+        <p>Circles is a collaborative platform for your workspace, where you and your circle can bring all your
+            workspace communication in a shared space and work efficiently.
+        </p>
+        <p>Circles let's you create teams where you can communicate with your team members and share documents, helping
+            you streamline the workflow of your organisation
+        </p>
+    </div>
+    <p style="text-align: center; font-weight: bold;">Join CIRCLES today!</p>
+
+</body>
+
+<script>
+    setTimeout(function () {
+        document.querySelector('.fmessage').fadeOut('fast');
+    }, 5000);
+</script>
+
+</html>

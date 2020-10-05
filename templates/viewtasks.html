@@ -1,0 +1,154 @@
+{% extends "profile.html" %}
+
+{% block content %}
+<style>
+	.task-heading {
+		font-size: 25px;
+		padding: 10px;
+	}
+
+	.task-table {
+		table-layout: auto;
+		width: 100%;
+	}
+
+	.task-table th {
+		font-size: 20px;
+		padding: 10px;
+		border-bottom: 1px solid;
+	}
+
+	.task-table td {
+		text-align: center;
+		padding: 10px;
+	}
+
+	.tasks {
+		padding-left: 10px;
+		margin-left: 10px;
+		width: 98%;
+		height: 100%;
+		overflow: auto;
+		max-height: 24%;
+	}
+</style>
+<div class="task-container" style="grid-row:1/4 ; grid-column: 2/4;background-color: snow;">
+
+	<h1 style="text-align: center;">TASKS</h1>
+	<div class="task-heading">
+		Incomplete Tasks
+	</div>
+	<div class="tasks">
+
+		{% if incompleted|length %}
+		<table class="task-table">
+			<tr>
+				<th>Task</th>
+				<th>Deadline</th>
+				<th>Description</th>
+				<th>Team</th>
+			</tr>
+			{% for task in incompleted %}
+			<tr>
+				<td>{{ task[0].task_name }}</td>
+				<td> {{ momentjs(task[0].deadline).format("MMMM Do YYYY") }} </td>
+				<td> {{ task[0].task_desc }} </td>
+				<td> {{ task[1].team_name }} </td>
+				<td><span class="material-icons"
+						onclick="window.location.href='{{ url_for('complete',task_id=task[0].id) }}';">done</span></td>
+
+			</tr>
+
+
+			{% endfor %}
+		</table>
+
+		{% else %}
+		<p> No tasks</p>
+		{% endif %}
+
+	</div>
+
+	<div class="task-heading">
+		Completed Tasks
+	</div>
+
+	<div class="tasks" style="list-style: none;">
+		{% if completed|length %}
+		<table class="task-table">
+			<tr>
+				<th>Task</th>
+				<th>Deadline</th>
+				<th>Team</th>
+				<th>Description</th>
+				<th>Completed On</th>
+				<th></th>
+			</tr>
+			{% for task in completed %}
+			<tr>
+				<td>{{ task[0].task_name }}</td>
+				<td>{{ momentjs(task[0].deadline).format("MMMM Do YYYY") }} </td>
+				<td> {{ task[1].team_name }} </td>
+				<td> {{ task[0].task_desc }} </td>
+				<td>{{ momentjs(task[0].completed_on).calendar() }}</td>
+				<td><span class="material-icons"
+						onclick="window.location.href='{{ url_for('undo_complete',task_id=task[0].id) }}';">undo</span>
+				</td>
+
+			</tr>
+
+
+			{% endfor %}
+		</table>
+
+		{% else %}
+		<p> No tasks</p>
+		{% endif %}
+	</div>
+
+
+	<div class="task-heading">
+		Deadline Missed
+	</div>
+
+	<div class="tasks" style="list-style: none;">
+		{% if expired|length %}
+		<table class="task-table">
+			<tr>
+				<th>Task</th>
+				<th>Deadline</th>
+				<th>Team</th>
+				<th>Description</th>
+				<th>Response</th>
+				<th>Provide Response</th>
+			</tr>
+			{% for task in expired %}
+			<tr>
+				<td>{{ task[0].task_name }}</td>
+				<td>{{ momentjs(task[0].deadline).format("MMMM Do YYYY") }}</td>
+				<td> {{ task[1].team_name }} </td>
+				<td> {{ task[0].task_desc }} </td>
+				{% if task[0].response|length %}
+				<td>{{ task[0].response}}</td>
+				{% else %}
+				<td> No Response </td>
+				{% endif %}
+				<form action="{{ url_for('submit_response',task_id=task[0].id) }}" method="POST">
+					<td> <input type="text" name="response"> </td>
+					<td> <input type="submit" value="Submit"> </td>
+				</form>
+			</tr>
+
+
+			{% endfor %}
+		</table>
+
+		{% else %}
+		<p> No tasks</p>
+		{% endif %}
+	</div>
+
+
+</div>
+
+{% endblock %}

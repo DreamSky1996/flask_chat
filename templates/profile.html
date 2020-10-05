@@ -1,0 +1,330 @@
+<html lang="en">
+<link rel="stylesheet" href="/static/styles/profile.css">
+<link rel="stylesheet" href="/static/styles/chat.css">
+<link rel="stylesheet" href="/static/styles/chat.css">
+<link rel="stylesheet" href="/static/styles/normalize.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+<script src="/static/scripts/profile.js"></script>
+<script src="/static/scripts/chat.js"></script>
+<script src="/static/scripts/moment.min.js"></script>
+
+<head>
+    {% if curr_team %}
+    <title> {{ curr_team.team_name }}</title>
+    {% endif %}
+    <title>Welcome!, {{ current_user.name }}</title>
+
+</head>
+<meta name="viewport" content="width=device-width" , initial-scale="1">
+
+<body>
+
+
+    <div class="container">
+        {% if profile %}
+
+        {% block pr %}
+
+        {% endblock %}
+
+        {% else %}
+
+        <div class="sidebar">
+
+            <div class="profile">
+                <a href="/editprofile">
+                    <svg data-jdenticon-value="{{current_user.name}}" width="80" height="80">
+                        Fallback text or image for browsers not supporting inline svg.
+                    </svg>
+                </a>
+
+                <div class="name"> {{ current_user.name }}</div>
+
+                <div class="dropdown">
+                    <img src="/static/images/more_vrt.png" class="drop-btn" alt=""
+                        style="width: 40px;align-content: center;">
+
+                    <div class="drop-menu">
+                        <a href="/createteam">Create Team</a>
+                        <a href="/logout">Logout</a>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="teamsheader" style="color : #fc3469;"> Teams</div>
+
+            <div class="team-list" style="overflow:auto;max-height: 50%;">
+                {% if teams.count()  %}
+
+                {% for team in teams %}
+                <a href="{{ url_for('team_chat', team_id = team.team_id)}}"> {{ team.team_name }} </a>
+                {% endfor %}
+                {% else %}
+
+                <li>No Teams</li>
+                {% endif %}
+            </div>
+
+            <div class="teamsheader" style="color : #fc3469;"> Tasks</div>
+
+            <div class="view">
+                <img src="/static/images/tasks.png" alt="" style="width: 40px;">
+                <a href="/viewtasks">View Tasks</a>
+            </div>
+
+            <div class="view">
+
+                <span class="material-icons" style="color:white; font-size: 40px;">calendar_today</span>
+                <a href="/calendar">Calendar</a>
+            </div>
+            {% if (is_admin ==1) or (tsk==1) %}
+            <div class="view">
+                <img src="/static/images/taskmanager.png" alt="" style="width: 40px;">
+                <a href="/taskmanager">Task Manager</a>
+            </div>
+            {% endif %}
+
+        </div>
+
+        {% endif %}
+
+        {% if not curr_team and (is_admin is not sameas True)  and (check is not sameas True) %}
+        {% with messages= get_flashed_messages() %}
+        {% if messages %}
+        {% for msg in messages %}
+        <div class="fmessage" style=" margin-left:20px;padding: 10px;background-color: green;color: white;">
+            <span style="margin-left: 15px;color: white;font-weight: bold;float: right;font-size: 22px;line-height: 20px;cursor: pointer;
+                    transition: 0.3s;" onclick="this.parentElement.style.display='none';">&times;</span>
+            <p>{{msg}}</p>
+        </div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+        {% endif %}
+
+
+        {% if check %}
+
+
+        {% block content %}
+
+        {% endblock %}
+
+
+
+
+        {% endif %}
+
+
+
+        {% if curr_team %}
+        <div class="header box">
+            <!-- <img style="cursor: pointer;width: 45px;" src="/static/images/logo.png"> -->
+            <div class="team_name">{{ curr_team.team_name }} </div>
+
+            {% if is_admin %}
+            <div style="display: flex;">
+                <div class="dropdown2">
+                    <img src="/static/images/more_vrt.png" class="drop-btn" alt=""
+                        style="font-size: 40px;width: 40px;align-content: center;">
+
+                    <div class="drop-menu">
+                        <li class="plus">Add Member</li>
+                        <li class="removemember">Remove Member</li>
+                        <li class="deleteteam">Delete Team</li>
+                    </div>
+                </div>
+                <!----<div class=plus style="font-size: 40px;cursor: pointer;" > + </div> -->
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="message-area box" id="displaymessage">
+
+            {% with messages= get_flashed_messages() %}
+            {% if messages %}
+            {% for msg in messages %}
+            <div class="fmessage"
+                style=" margin-left:20px;padding: 10px;background-color: green;color: white;position:fixed;width: 55%;">
+                <span style="margin-left: 15px;color: white;font-weight: bold;float: right;font-size: 22px;line-height: 20px;cursor: pointer;
+                                transition: 0.3s;" onclick="this.parentElement.style.display='none';">&times;</span>
+                <p>{{msg}}</p>
+            </div>
+            {% endfor %}
+            {% endif %}
+            {% endwith %}
+
+
+            {% if messages %}
+            {% for msg in messages %}
+            {% if msg.sender == current_user.id %}
+
+            <p class="mymsg">
+
+                <span class="myname">{{current_user.name}}</span>
+                <br>
+                {% if msg.file_id is none %}
+                <span class="message" style="word-wrap: break-word;">{{msg.msgbody}}</span>
+                <br>
+                {% else %}
+                <a href="/download/{{curr_team.id}}/{{msg.msgbody}}" style="word-wrap: break-word;">{{msg.msgbody}}</a>
+                <br>
+                {% endif %}
+
+                <span class="time-stamp-right">{{ momentjs(msg.time_stamp).calendar() }}</span>
+            </p>
+
+            {% else %}
+
+            <p class="other">
+                <span class="othername">{{msg.messagesender.name}}</span>
+                <br>
+
+                {% if msg.file_id is none %}
+
+                <span class="message">{{msg.msgbody}}</span>
+                <br>
+                {% else %}
+
+                <a href="/download/{{curr_team.id}}/{{msg.msgbody}}" style="word-wrap: break-word;">{{msg.msgbody}}</a>
+                <br>
+                {% endif %}
+
+                <span class="time-stamp-left">{{ momentjs(msg.time_stamp).calendar() }}</span>
+            </p>
+
+            {% endif %}
+            {% endfor %}
+            {% endif %}
+
+        </div>
+
+
+        <div class="input-area">
+            <label>
+                <iframe name="hiddenFrame" width="0" height="0" border="0" style="display: none;"></iframe>
+                <form action="{{ url_for('uploads',team_id=curr_team.id) }}" id="uploadForm" method="POST"
+                    enctype="multipart/form-data" target="hiddenFrame">
+                    <input name="file" type="file" id="file" style="display: none;">
+                    <img src="/static/images/fileupload.png" class="drop-btn" alt=""
+                        style="width: 25px; margin-right: 5px;padding-top: 5px;">
+                </form>
+            </label>
+            <input class="input-msg" type="text" id="user_message" placeholder="Enter a message">
+            <button id="sendbutton" style="margin-left: 15px; padding: 5px;">Send</button>
+        </div>
+
+
+        <div class="team-details">
+            <div class="teaminfo"
+                style="text-align: center; font-size: 30px; margin-top: 25px;padding-bottom:16px; border-bottom: 0.5px solid yellow;">
+                Team Info</div>
+            <div class="detail-heading" style="color : #fc3469;">Team Name</div>
+            <div class="details-ans">{{curr_team.team_name}}</div>
+
+            <div class="detail-heading" style="color : #fc3469;">Team Description</div>
+            <div class="details-ans">{{curr_team.team_description}}</div>
+
+            <div class="detail-heading" style="color : #fc3469;">Admin</div>
+            <div class="details-ans">{{admin.name}}</div>
+
+            <style>
+                .active {
+                    height: 10px;
+                    width: 10px;
+                    background-color: green;
+                    border-radius: 50%;
+                    display: inline-block;
+                    margin-right: 10px;
+                    margin-top: 4px;
+                }
+
+                .inactive {
+                    height: 10px;
+                    width: 10px;
+                    background-color: grey;
+                    border-radius: 50%;
+                    display: inline-block;
+                    margin-right: 10px;
+                    margin-top: 4px;
+                }
+            </style>
+            <div class="detail-heading" style="color : #fc3469;">Members</div>
+            <ul id="list" style="list-style: none; overflow:auto;max-height: 54%;">
+                {% for user in members %}
+                {% if user.id in active_members %}
+                <div id="{{ user.id }}" style="display:flex;">
+                    <span class="active"></span>
+                    <li>{{user.name}}</li>
+                </div>
+                {% else %}
+                <div id="{{ user.id }}" style="display:flex;">
+                    <span class="inactive"></span>
+                    <li>{{user.name}}</li>
+                </div>
+                {% endif %}
+                <br>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <div class="modal-bg">
+            <div class="modal-content">
+                <b class="modal-title" style="font-size: 20px;"> </b>
+
+                <div class="close"> + </div>
+
+                <form class="modal-form" method="POST">
+
+                    <input name="email" type="text" style="padding: 20px; margin: 25px;"
+                        placeholder="Please enter member's email" id="member-params">
+                    <button type="submit" id="buttonprofile">Add</button>
+
+                </form>
+            </div>
+
+
+
+
+
+            {% endif %}
+
+
+
+        </div>
+
+
+        <!-- Add member -->
+
+
+
+
+
+        <script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"
+            integrity="sha256-yr4fRk/GU1ehYJPAs8P4JlTgu0Hdsp4ZKrx8bDEDC3I=" crossorigin="anonymous"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.4.0/fullcalendar.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/jdenticon@2.2.0" async>
+        </script>
+        <script type='text/javascript'>
+            let name = `{{ current_user.name }}`;
+            let user_id = `{{current_user.id}}`;
+
+            setTimeout(function () {
+                $('.fmessage').fadeOut('fast');
+            }, 5000);
+        </script>
+
+
+
+        {% if curr_team %}
+
+        <script type='text/javascript'>
+            let team = `{{ curr_team.id }}`;
+        </script>
+
+        {% endif %}
+</body>
+
+</html>
